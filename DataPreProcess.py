@@ -49,15 +49,15 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
         if fn == 0:
             if leadtime:
                 a = np.array(df)
+                if len(a.shape) == 1:
+                    a = a.reshape((a.shape[0],1))
                 #t = 3
                 for i in range(t):
                     if i == 0:
                         b = np.hstack((a[t:], a[(t-1):-1]))# np.hstack((a[3:], a[2:-1])) t = 3 #t-1
                     else:
                         b = np.hstack((b, a[(t-1-i):(-1-i)])) #np.hstack((b, a[1:-2])) #t-2 
-                allLabels = labels[t:]
-                if len(b.shape) == 1:
-                    b = b.reshape((b.shape[0],1))                
+                allLabels = labels[t:]                              
                 allData = b 
             else:
                 allLabels = labels
@@ -66,6 +66,8 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
             if leadtime:
                 # lead time = 3
                 a = np.array(df)
+                if len(a.shape) == 1:
+                    a = a.reshape((a.shape[0],1))
                 #t = 3
                 for i in range(t):
                     if i == 0:
