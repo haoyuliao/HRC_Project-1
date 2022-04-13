@@ -12,8 +12,8 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
         #print(filesName[fn])
         #Load the dataset.
         Marks = pd.read_excel(filesName[fn], sheet_name='Markers')
-        sN = Marks['Frame'].iloc[len(Marks['Frame'])-10]+1 ####
-        lsN = Marks['Frame'].iloc[len(Marks['Frame'])-2]+1 ####
+        sN = Marks['Frame'].iloc[0]+1 ####
+        lsN = Marks['Frame'].iloc[-2]+1 ####
         #print(len(Marks['Frame']))
         for i in range(len(sheetName)):
             Data = pd.read_excel(filesName[fn], sheet_name=sheetName[i])
@@ -24,17 +24,17 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
         #print(Marks['Frame'])
         #print(lsN)
         lbN = 1 #Name of label
-        for i in range(len(Marks['Frame'])-9, len(Marks['Frame'])-1): ###
-            if i == (len(Marks['Frame'])-9): ###
+        for i in range(1, len(Marks['Frame'])-1): ###
+            if i == 1: ###
                 n = Marks['Frame'][i]- Marks['Frame'][i-1]
                 labels = np.zeros((n,1), dtype=int)
                 labels[-45:] = lbN ## For 9 labels
                 #print(n)
                 continue
                 
-            if i == (len(Marks['Frame'])-5) or i == (len(Marks['Frame'])-3): ### 5 oo 7
+            if i == 5 or i == 7: ### 5 oo 7
                 continue
-            if i == (len(Marks['Frame'])-6) or i == (len(Marks['Frame'])-4): ### 4 or 6
+            if i == 4 or i == 6: ### 4 or 6
                 n = Marks['Frame'][i+1] - Marks['Frame'][i-1]
             else:
                 n = Marks['Frame'][i] - Marks['Frame'][i-1]
@@ -56,6 +56,8 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
                     else:
                         b = np.hstack((b, a[(t-1-i):(-1-i)])) #np.hstack((b, a[1:-2])) #t-2 
                 allLabels = labels[t:]
+                if len(b.shape) == 1:
+                    b = b.reshape((b.shape[0],1))                
                 allData = b 
             else:
                 allLabels = labels
@@ -71,6 +73,8 @@ def dataPreProcess(filesName, ColumnsName, sheetName, leadtime=True , t = 3):
                     else:
                         b = np.hstack((b, a[(t-1-i):(-1-i)])) #np.hstack((b, a[1:-2])) #t-2           
                 allLabels = np.vstack((allLabels, labels[t:]))
+                if len(b.shape) == 1:
+                    b = b.reshape((b.shape[0],1))
                 allData = np.vstack((allData, b))
             else:
                 allLabels = np.vstack((allLabels, labels))
